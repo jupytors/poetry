@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify,Response
 from config import config
 from database import init_db
 from models import PoemModel
-import os
+from stream import generate_kimi_stream
+import os,json
 
 # 创建 Flask 应用
 app = Flask(__name__)
@@ -123,12 +124,35 @@ def api_stats():
     stats = PoemModel.get_stats()
     return jsonify({'success': True, 'data': stats})
 
-@app.route('/cloud')
-def api_stats():
-    """词云"""
-    cloud=[]
-    return render_template('cloud.html', cloud=cloud)
+@app.route('/chart')
+def api_chart():
+    """流对话"""
+    chart=[]     
+    return render_template('chart.html', chart=chart)
 
+
+@app.route("/api/stream", methods=["POST"])
+def kimi_stream():
+    """Kimi 流式交互接口（接收前端请求）"""
+    data = request.get_json()
+    prompt = data.get("prompt", "").strip()
+    history_messages = data.get("history", [])  # 接收对话历史，支持多轮
+
+    if not prompt:
+        return Response(
+            f"data: {json.dumps({'error': '请输入消息内容'})}\n\n",
+            mimetype="text/event-stream"
+        )
+
+    # 返回流式响应（SSE 协议）
+    return Response(
+        generate_kimi_stream(prompt, history_messages),
+        mimetype="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",  # 禁用缓存，确保实时性
+            "X-Accel-Buffering": "no"     # 禁用 nginx 缓冲（部署时需保留）
+        }
+    )
 @app.errorhandler(404)
 def page_not_found(e):
     """404 错误处理"""
