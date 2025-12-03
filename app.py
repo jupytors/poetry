@@ -8,6 +8,7 @@ import os,json
 
 # 创建 Flask 应用
 app = Flask(__name__)
+#ollama   serv
 
 # 加载配置
 env = os.environ.get('FLASK_ENV', 'development')
