@@ -148,7 +148,8 @@ def kimi_stream():
 
     # 返回流式响应（SSE 协议）
     return Response(
-        generate_deepseek_stream(prompt, history_messages),
+        #generate_deepseek_stream(prompt, history_messages),
+        generate_kimi_stream(prompt, history_messages),
         mimetype="text/event-stream",
         headers={
             "Cache-Control": "no-cache",  # 禁用缓存，确保实时性

@@ -1,4 +1,5 @@
 pip install -r requirements.txt
+chmod +x run.sh
 cd data
 git clone https://github.com/chinese-poetry/chinese-poetry.git raw/chinese-poetry
 cd ..

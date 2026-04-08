@@ -3,7 +3,7 @@ import json,socket, threading
 from openai import OpenAI
 
 # 初始化 Kimi 客户端（复用原配置：moonshot 平台 API）
-KIMI_API_KEY = "sk-0GWM8V9S2oYohUqBZe45lwlWdRyRscuJCEk7BkayEb872qy1"
+KIMI_API_KEY = "复制 kimi 的 api key  到这里"
 client = OpenAI(
     api_key=KIMI_API_KEY,
     base_url="https://api.moonshot.cn/v1",  # Kimi 专属 base_url
