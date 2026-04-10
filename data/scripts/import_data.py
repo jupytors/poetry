@@ -178,7 +178,21 @@ def import_from_directory(cursor, directory, dynasty, pattern):
         
         try:
             with open(json_file, 'r', encoding='utf-8') as f:
-                poems = json.load(f)
+                data = json.load(f)
+                
+                # 检查数据类型：如果是字典且包含介绍信息，跳过
+                if isinstance(data, dict):
+                    # 检查是否是介绍文件（如 intro.json）
+                    if 'desc' in data or 'title' in data and not any(key in data for key in ['paragraphs', 'content', 'para']):
+                        print(f'\n  跳过介绍文件: {json_file.name}')
+                        continue
+                    # 如果是单个诗词对象，包装成列表
+                    poems = [data]
+                elif isinstance(data, list):
+                    poems = data
+                else:
+                    print(f'\n  警告: 文件 {json_file.name} 包含不支持的数据类型: {type(data)}')
+                    continue
                 
                 for poem in poems:
                     if import_poem(cursor, poem, dynasty):
@@ -195,7 +209,21 @@ def import_from_file(cursor, json_file, dynasty):
     
     try:
         with open(json_file, 'r', encoding='utf-8') as f:
-            poems = json.load(f)
+            data = json.load(f)
+            
+            # 检查数据类型：如果是字典且包含介绍信息，跳过
+            if isinstance(data, dict):
+                # 检查是否是介绍文件（如 intro.json）
+                if 'desc' in data or 'title' in data and not any(key in data for key in ['paragraphs', 'content', 'para']):
+                    print(f'  跳过介绍文件: {json_file.name}')
+                    return 0
+                # 如果是单个诗词对象，包装成列表
+                poems = [data]
+            elif isinstance(data, list):
+                poems = data
+            else:
+                print(f'  警告: 文件 {json_file.name} 包含不支持的数据类型: {type(data)}')
+                return 0
             
             for poem in poems:
                 if import_poem(cursor, poem, dynasty):
