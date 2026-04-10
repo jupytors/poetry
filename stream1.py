@@ -2,8 +2,8 @@
 import json,socket, threading
 from openai import OpenAI
 
-# 初始化 Kimi 客户端（复用原配置：moonshot 平台 API）
-KIMI_API_KEY = "复制 kimi 的 api key  到这里"
+# 到 https://platform.kimi.com/  注册并 实名后有15元免费额度 没有时间限制，其它平台为3个月内免费。
+KIMI_API_KEY = "api key" #复制 kimi 的 api key  到这里
 client = OpenAI(
     api_key=KIMI_API_KEY,
     base_url="https://api.moonshot.cn/v1",  # Kimi 专属 base_url
@@ -15,6 +15,10 @@ def generate_kimi_stream(prompt, history_messages=None):
     :param history_messages: 对话历史（支持多轮对话）
     :return: 流式响应迭代器
     """
+    # 检查 API Key 是否有效
+    if not KIMI_API_KEY or KIMI_API_KEY == "api key":
+        yield f"data: {json.dumps({'error': '请在stream1.py中设置KIMI_API_KEY的值'})}\n\n"
+        return
     # 初始化对话历史（包含系统提示）
     messages = [{"role": "system", "content": "你是Kimi AI助手，提供中文对话服务。"}]
     if history_messages:
