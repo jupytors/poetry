@@ -3,7 +3,18 @@ chmod +x run.sh
 cd data
 git clone https://github.com/chinese-poetry/chinese-poetry.git raw/chinese-poetry
 cd ..
+echo '# .vscode/preview.yml
+autoOpen: false
+apps:
+  - port: 8000
+    run: python app.py
+    root: ./poetry
+    name: poetry-flask
+    description: 古诗词 Flask 应用
+    autoOpen: true' > /workspace/.vscode/preview.yml
+	
 python data/scripts/import_data.py
+
 python app.py
 
 cat << EOF
